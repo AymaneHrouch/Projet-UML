@@ -1,25 +1,38 @@
 <?php
 function AfficherLesStages($bResponsable = false)
 {
-    include 'config.php';
-    $result = $pdo->query('select nom, adresse, date_debut, date_fin from organisme, stage where stage.id_organisme = organisme.id');
+    include_once 'config.php';
+    $result = $pdo->query('select stage.id, nom, adresse, date_debut, date_fin from organisme, stage where stage.id_organisme = organisme.id');
     
-    echo "les stages disponibles:<br />";
-
-    echo "<table>";
-    echo "<tr>";
-    echo "<th>Nom de l'organism</th>";
-    echo "<th>Adresse</th>";
-    echo "<th>Date de debut</th>";
-    echo "<th>Date de fin</th>";
-    echo "</tr>";
-
+    echo '
+    les stages disponibles:<br />
+    <table>
+    <tr>
+    <th>Nom de l\'organisme</th>
+    <th>Adresse</th>
+    <th>Date de debut</th>
+    <th>Date de fin</th>
+    </tr>';
+    
+    if ($bResponsable)
+    {
+        echo '<a href="ajouter_stage.php">New</a>';
+    }
+    
     while($data = $result->fetch()) {
-        echo "<tr>";
-        echo "<td>{$data["nom"]}</td>";
-        echo "<td>{$data["adresse"]}</td>";
-        echo "<td>{$data["date_debut"]}</td>";
-        echo "<td>{$data["date_fin"]}</td>";
+        echo "
+        <tr>
+        <td>{$data["nom"]}</td>
+        <td>{$data["adresse"]}</td>
+        <td>{$data["date_debut"]}</td>
+        <td>{$data["date_fin"]}</td>";
+        if($bResponsable)
+        {
+            echo "
+                <td><a href=\"modifier_stage.php?id=".$data['id']."\">Modifier</a></td>
+                <td><a href=\"supprimer_stage.php?id=".$data['id']."\">Supprimer</a></td>
+            ";
+        }
         echo "</tr>";
     }
 }
