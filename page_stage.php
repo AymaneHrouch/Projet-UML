@@ -2,16 +2,15 @@
 function AfficherLesStages($bResponsable = false)
 {
     include_once 'config.php';
-    $result = $pdo->query('select stage.id, nom, adresse, date_debut, date_fin from organisme, stage where stage.id_organisme = organisme.id');
+    $result = $pdo->query('select stage.id, nom, adresse, from organisme, stage where stage.id_organisme = organisme.id');
     
     echo '
     les stages disponibles:<br />
     <table>
     <tr>
+    <th>#</th>
     <th>Nom de l\'organisme</th>
     <th>Adresse</th>
-    <th>Date de debut</th>
-    <th>Date de fin</th>
     </tr>';
     
     if ($bResponsable)
@@ -22,10 +21,9 @@ function AfficherLesStages($bResponsable = false)
     while($data = $result->fetch()) {
         echo "
         <tr>
+        <td>{$date['id']}</td>
         <td>{$data["nom"]}</td>
-        <td>{$data["adresse"]}</td>
-        <td>{$data["date_debut"]}</td>
-        <td>{$data["date_fin"]}</td>";
+        <td>{$data["adresse"]}</td>";
         if($bResponsable)
         {
             echo "
