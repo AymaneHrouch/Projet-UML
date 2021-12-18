@@ -13,3 +13,7 @@
         public $adresse;
     }
 ?>
+
+
+select organisme_id from stage where id = stage_id
+select * from organisme where id = organisme_id;

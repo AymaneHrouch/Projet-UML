@@ -4,13 +4,12 @@ session_start();
 
 // Check if the user is already logged in, if yes then redirect him to welcome page
 if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
-    header("location: page_etudiant.php");
+    header("location: index.php");
     exit;
 }
  
 // Include config file
 require_once "config.php";
-require_once "./classes/Personne.php"; 
 // Define variables and initialize with empty values
 $cni = $mdp = "";
 $cni_err = $mdp_err = $login_err = "";
@@ -19,10 +18,10 @@ $cni_err = $mdp_err = $login_err = "";
 if($_SERVER["REQUEST_METHOD"] == "POST"){
  
     // Check if cni is empty
-    if(empty(trim($_POST["cni"]))){
+    if(empty(trim($_POST["login"]))){
         $cni_err = "Please enter cni.";
     } else{
-        $cni = trim($_POST["cni"]);
+        $cni = trim($_POST["login"]);
     }
     
     // Check if mdp is empty
@@ -35,33 +34,32 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     // Validate credentials
     if(empty($cni_err) && empty($mdp_err)){
         // Prepare a select statement
-        $sql = "SELECT cni, nom, prenom, mdp, occupation FROM personne WHERE cni = :cni";
+        $sql = "SELECT pwd, mode from users where `login`=:login";
         
         if($stmt = $pdo->prepare($sql)){
             // Bind variables to the prepared statement as parameters
-            $stmt->bindParam(":cni", $param_cni, PDO::PARAM_STR);
+            $stmt->bindParam(":login", $param_cni, PDO::PARAM_STR);
             
             // Set parameters
-            $param_cni = trim($_POST["cni"]);
+            $param_cni = trim($_POST["login"]);
             
             // Attempt to execute the prepared statement
             if($stmt->execute()){
                 // Check if cni exists, if yes then verify mdp
                 if($stmt->rowCount() == 1){
                     if($row = $stmt->fetch()){
-                        $cni = $row["cni"];
-                        $mdp_corr = $row["mdp"];
+                        $mdp_corr = $row["pwd"];
                         if($mdp == $mdp_corr){
                             // mdp is correct, so start a new session
-                            // session_start();
-                            
-                            // Store data in session variables
                             $_SESSION["loggedin"] = true;
-                            $_SESSION["occupation"] = $row["occupation"];
-                            if($_SESSION["occupation"] == "etudiant") {
-                                require_once __DIR__ . '/classes/Etudiant.php';
-                                $_SESSION["utilisateur"] = new Etudiant($cni, "aymane", $row["prenom"]);
-                                header("location: page_etudiant.php");
+                            $_SESSION["mode"] = $row["mode"];
+                            if($_SESSION["mode"] == "etud") {
+                                require_once __DIR__ . '/classes/Etudiant.php';  
+                                $_SESSION["utilisateur"] = new Etudiant($_POST["login"]);
+                                header("location: index.php");
+                            }
+                            else {
+                                header("location: index.php");
                             }
                         } else{
                             // mdp is not valid, display a generic error message
@@ -111,8 +109,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
             <div class="form-group">
-                <label>cni</label>
-                <input type="text" name="cni" class="form-control <?php echo (!empty($cni_err)) ? 'is-invalid' : ''; ?>" value="1">
+                <label>Username</label>
+                <input type="text" name="login" class="form-control <?php echo (!empty($cni_err)) ? 'is-invalid' : ''; ?>" value="root">
                 <span class="invalid-feedback"><?php echo $cni_err; ?></span>
             </div>    
             <div class="form-group">
@@ -123,7 +121,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             <div class="form-group">
                 <input type="submit" class="btn btn-primary" value="Login">
             </div>
-            <p>Don't have an account? <a href="signup.php">Sign up now</a>.</p>
         </form>
     </div>
 </body>

@@ -1,13 +1,15 @@
 <?php
+session_start();
+if(!$_SESSION["loggedin"]) {
+    header('location: login.php');
+}
 
-// Initialize the session
-// session_start();
- 
-// // Check if the user is already logged in, if yes then redirect him to welcome page
-// if(!isset($_SESSION["loggedin"])){
-//     header("location: login.php");
-//     exit;
-// }
+if($_SESSION["mode"] == 'etud') {
+    header('location: ./etud/liste_des_stages.php');
+} else if($_SESSION["mode"] === 'respo') {
+    header('location: ./respo/liste_des_stages.php');
+} else if(substr($_SESSION["mode"], 0, 4) === 'prof') {
+    header('location: ./prof/index.php');
+}
 
-// echo "bonjour " . $_SESSION['prenom'] . " so you're a " . $_SESSION["occupation"];
 ?>
