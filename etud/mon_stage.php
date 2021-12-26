@@ -10,7 +10,7 @@ if(isset($_POST["submit_rapport"])) {
 }
 
 
-if($_SERVER['REQUEST_METHOD']==='POST' && !isset($_POST["submit_rapport"])) {
+if($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST["plage_horaire_choisi"])) {
     $query = $pdo->prepare('update demande set plage_horaire = :plage_horaire where etat_demande = 1 and cne_etudiant = :cne_etudiant');
     $query->execute(array(
         'cne_etudiant' => $etudiant->cne,
