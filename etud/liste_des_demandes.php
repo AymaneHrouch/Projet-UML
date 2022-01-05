@@ -31,7 +31,7 @@ function get_Etat(int $i){
         </thead>
         <tbody>
 <?php
-    $result = $pdo->prepare('select date_envoye, demande_ecrit, etat_demande from demande where cne_etudiant=:cne_etudiant');
+    $result = $pdo->prepare('select date_envoye, demande_ecrit, etat_demande from demande where cne_etudiant=:cne_etudiant order by id asc');
     $result->execute(array(
         'cne_etudiant' => $_SESSION["utilisateur"]->cne
     ));

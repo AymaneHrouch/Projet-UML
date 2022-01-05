@@ -50,7 +50,7 @@ if(isset($_GET["rapport_id"]) && isset($_GET["nv_note"])) {
                     $q = "select id, filename, note3 from rapport order by id asc";
                     break;
             }
-            $res = $pdo->query($q);shu
+            $res = $pdo->query($q);
             while($data = $res->fetch())
             {
         ?>
